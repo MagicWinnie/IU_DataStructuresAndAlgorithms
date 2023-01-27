@@ -1,0 +1,165 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [2]{\color{blue}},
+    keywordstyle = [3]{\color{red}},
+    keywordstyle = [4]{\color{teal}},
+    morekeywords = [2]{secret},
+    morekeywords = [3]{for, while},
+    morekeywords = [4]{and,exchange,with},
+    moredelim    = [s][\color{ForestGreen}\it]{/*}{*/}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+\date{January 23-24, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 1. Problem set}
+
+\begin{enumerate}
+    \item Compute asymptotic worst case time complexity of the following algorithm (see pseudocode conventions in [\citetalias{Cormen}, Section 2.1]). You \textbf{must} use $\Theta$-notation. For justification, provide execution cost and frequency count for each line in the body of the \textcolor{blue}{secret} procedure. Optionally, you may provide details for the computation of the running time $T(n)$ for worst case scenario. Proof for the asymptotic bound is not required for this exercise.
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=1]
+    /* A is a 0-indexed array,
+     * n is the number of items in A */
+    secret(A, n):
+    k := 0
+    for i = 1 to n-1
+        k := k + 1
+        j := i
+        while j < n and A[j-1] $\geq$ A[j]
+            j := j + k
+        exchange A[i] with A[j]
+    \end{lstlisting}
+    \textbf{Solution.}
+    \begin{center}
+    \begin{tabular}{ l@{\hskip 3cm}c c }
+    \multicolumn{1}{c}{\textit{pseudocode}} & \textit{cost} & \textit{times} \\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=1]
+    /* A is a 0-indexed array,
+     * n is the number of items in A */
+    \end{lstlisting} & 0 & 1\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=3]
+    secret(A, n):
+    \end{lstlisting} & 0 & 1\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=4]
+    k := 0
+    \end{lstlisting} & $c_1$ & 1\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=5]
+    for i = 1 to n-1
+    \end{lstlisting} & $c_2$ & $n$\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=6]
+        k := k + 1
+    \end{lstlisting} & $c_3$ & $n - 1$\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=7]
+        j := i
+    \end{lstlisting} & $c_4$ & $n - 1$\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=8]
+        while j < n and A[j-1] $\geq$ A[j]
+    \end{lstlisting} & $c_5$ & $\sum_{i=1}^{n-1}{t_i}$\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=9]
+            j := j + k
+    \end{lstlisting} & $c_6$ & $\sum_{i=1}^{n-1}{(t_i - 1)}$\\
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=10]
+        exchange A[i] with A[j]
+    \end{lstlisting} & $c_7$ & $n - 1$\\
+    \end{tabular}
+    \end{center}
+    Therefore, worst case scenario: $T(n) = 0 \cdot 1 + 0 \cdot 1 + c_1 \cdot 1 + c_2 \cdot n + c_3 \cdot (n - 1) + c_4 \cdot (n - 1) + c_5 \cdot \sum_{i=1}^{n-1}{t_i} + c_6 \cdot \sum_{i=1}^{n-1}{(t_i - 1)} + c_7 \cdot (n - 1) = c_1 \cdot 1 + c_2 \cdot n + c_3 \cdot (n - 1) + c_4 \cdot (n - 1) + c_5 \cdot \frac{n \cdot (n - 1)}{2} + c_6 \cdot \frac{(n - 1) \cdot (n - 2)}{2} + c_7 \cdot (n - 1) = c_1 + c_2 \cdot n + c_3 \cdot n - c_3 + c_4 \cdot n - c_4 + \frac{c_5}{2} \cdot n^2 - \frac{c_5}{2} \cdot n + \frac{c_6}{2} \cdot n^2 - \frac{3c_6}{2} \cdot n + c_6 + c_7 \cdot n - c_7 = (\frac{c_5}{2} + \frac{c_6}{2}) \cdot n^2 + (c_2 + c_3 + c_4 - \frac{c_5}{2} - \frac{3c_6}{2} + c_7) \cdot n + (c_1 - c_3 - c_4 + c_6 - c_7) = \Theta(n^2)$
+
+    \item Indicate, for each pair of expressions (A, B) in the table below whether $A = O(B)$, $A = o(B)$, $A = \Omega(B)$, $A = \omega(B)$, or $A = \Theta(B)$. Write your answer in the form of the table with \textit{yes} or \textit{no} written in each box:
+    \begin{center}
+    \begin{tabular}{ |c|c||c|c|c|c|c| } 
+     \hline
+     $A$ & $B$ & $A = O(B)$ & $A = o(B)$ & $A = \Omega(B)$ & $A = \omega(B)$ & $A = \Theta(B)$ \\ 
+     \hline\hline
+     $\log^5{n}$ & $\sqrt[4]{n}$ & & & & & \\
+     \hline
+     $n^{1000}$ & $1.0001^n$ & & & & & \\
+     \hline
+     $n^{\cos{n}}$ & $\log{n}$ & & & & & \\
+     \hline
+     $3^n$ & $3^{0.5n}$ & & & & & \\
+     \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Solution.}
+    \begin{center}
+    \begin{tabular}{ |c|c||c|c|c|c|c| } 
+     \hline
+     $A$ & $B$ & $A = O(B)$ & $A = o(B)$ & $A = \Omega(B)$ & $A = \omega(B)$ & $A = \Theta(B)$ \\ 
+     \hline\hline
+     $\log^5{n}$ & $\sqrt[4]{n}$ & yes & yes & no & no & no \\
+     \hline
+     $n^{1000}$ & $1.0001^n$ & yes & yes & no & no & no \\
+     \hline
+     $n^{\cos{n}}$ & $\log{n}$ & no & no & no & no & no \\
+     \hline
+     $3^n$ & $3^{0.5n}$ & no & no & yes & yes & no \\
+     \hline
+    \end{tabular}
+    \end{center}
+
+    \item Let $f$ and $g$ be functions from positive integers to positive reals. Assume $f(n) > n$ for $n > 0$. Using definition of asymptotic notation, prove formally that
+    \[\min(f(n) - n, g(n) + n) = O(f(n) + g(n))\]
+    \textbf{Solution.}
+    
+    \textbf{Proof.} We need to show that there $\exists$ constants $c$ and $n_0$, such that $\forall n \geq n_0$ we have $\min(f(n) - n, g(n) + n) \leq c \cdot (f(n) + g(n))$.
+
+    Let $c = 1, n_0 = 1$
+    Consider two cases:
+    \begin{enumerate}
+        \item $\min(f(n) - n, g(n) + n) = f(n) - n$. Then, we have $f(n) - n = O(f(n) + g(n))$.
+        
+        $f(n) - n \leq c \cdot (f(n) + g(n))$
+        
+        $f(n) - n \leq (f(n) + g(n))$
+        
+        $0 \leq g(n) + n, g(n) > 0, n > 0 \Rightarrow$ it is true
+
+        \item $\min(f(n) - n, g(n) + n) = g(n) + n$. Then, we have $g(n) + n = O(f(n) + g(n))$.
+        
+        $g(n) + n \leq c \cdot (f(n) + g(n))$
+        
+        $g(n) + n \leq (f(n) + g(n))$
+        
+        $0 \leq f(n) - n, f(n) > n, n > 0 \Rightarrow$ it is true
+    \end{enumerate}
+    Thus, in both cases we have shown the inequality holds for all $n \geq n_0$.
+    
+    \textbf{QED.}
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022
+\end{thebibliography}
+
+\end{document}
