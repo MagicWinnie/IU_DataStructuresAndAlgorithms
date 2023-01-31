@@ -1,0 +1,135 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [2]{\color{blue}},
+    keywordstyle = [3]{\color{red}},
+    keywordstyle = [4]{\color{teal}},
+    morekeywords = [2]{secret},
+    morekeywords = [3]{for, while},
+    morekeywords = [4]{and,exchange,with},
+    moredelim    = [s][\color{ForestGreen}\it]{/*}{*/}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+\date{January 30-31, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 2. Problem set}
+
+\begin{enumerate}
+    \item In [\citetalias{Cormen}, Section 16.1], a total amortised time complexity is computed for a sequence of $n$ \textsc{Increment} operations starting from an initially zero counter. Compute the total amortised time complexity for a sequence of $n$ \textsc{Increment} operations starting from a non-zero counter with value $k$. No justification is required, provide your answer using big-Oh notation.
+
+    \textbf{Answer.} $O(1)$
+
+    \item In [\citetalias{Cormen}, Section 16.1], a stack with an extra operation \textsc{Multipop} is discussed. Provide an example of a sequence of \textsc{Push}, \textsc{Pop}, and \textsc{Multipop} operations on an initially empty stack, such that
+    \begin{enumerate}
+        \item the actual total cost of the sequence is 5,
+        \item the sequence contains one \textsc{Pop}, and one \textsc{Multipop}, and 3 \textsc{Push} operations, in some order,
+        \item \textsc{Multipop}($k$) must be used with $k \geq 2$.
+    \end{enumerate}
+    No justification is required for this exercise.
+
+    \textbf{Answer.} \textsc{Push}, \textsc{Multipop(2)}, \textsc{Push}, \textsc{Push}, \textsc{Pop}
+    
+    \item Consider \texttt{StackQueue}, an implementation of the Queue ADT using a pair of stacks: a \textit{front stack} and a \textit{rear stack}:
+    \begin{enumerate}
+        \item A queue is empty when both stacks are empty.
+        \item To perform \texttt{offer(e)}, we \texttt{push(e)} into the rear stack.
+        \item To perform \texttt{poll()}, we \texttt{pop()} from the front stack if it is not empty. If the front stack is empty, we repeatedly \texttt{pop()} elements from the rear stack and \texttt{push} them onto the front stack, until the rear stack is empty. Finally, we \texttt{pop()} from the front stack, since it is no longer empty.
+    \end{enumerate}
+    Perform amortised time complexity analysis for a sequence of \texttt{offer(e)} and \texttt{poll()} operations performed on an initially empty \texttt{StackQueue}. You \textbf{must} apply either the accounting method or the potential method.
+
+    Assume that the execution cost (time) of \texttt{push(e)}, \texttt{pop()}, \texttt{isEmpty()} for the underlying stack implementation is 1.
+
+    \textbf{Solution.}
+    
+    Amortised time will be calculated using the accounting method.
+    
+    From the problem statement we know that \texttt{offer} $\equiv$ \texttt{push} and \texttt{poll} $\equiv$ \texttt{pop} + \texttt{isEmpty} + \texttt{push}, so we need to find the amortized costs for the stack operations, and then use them to find the amortized costs for \texttt{offer} and \texttt{poll}.
+    
+    Actual costs of the stack operations (from the problem statement) are the following:
+    
+    \begin{tabular}{ l l }
+        operation & $c_i$\\
+        \texttt{push} &  1,\\
+        \texttt{pop} &  1,\\
+        \texttt{isEmpty} &  1,\\
+    \end{tabular}
+
+    Let us assign the following amortized costs:
+
+    \begin{tabular}{ l l }
+        operation & $\hat{c_i}$\\
+        \texttt{push} &  5,\\
+        \texttt{pop} &  0,\\
+        \texttt{isEmpty} &  1,\\
+    \end{tabular}
+
+    $\sum_{i=0}^n{\hat{c_i}} \geq \sum_{i=0}^n{c_i}$
+    
+    $5 + 0 + 1 \geq 1 + 1 + 1$
+
+    $6 \geq 3 \Rightarrow$ true
+
+    Let us see how to pay for any sequence of queue operations by charging the
+amortized costs. 
+
+    \textbf{Enqueue.}
+    \begin{enumerate}
+        \item When a new element is enqueued, we use 1 unit of cost for the enqueue and we leave the other 4 units of cost for future. 
+    \end{enumerate}
+    
+    \textbf{Dequeue.} 
+    \begin{enumerate}
+        \item When an element is dequeued, we use 1 unit of cost to check if the front stack is empty.
+        \item Front stack is empty.
+        \begin{enumerate}
+            \item On each iteration check if rear stack is empty. This costs 1 unit of cost, each element will have 3 units of cost left. 
+            \item Pop elements from the rear stack using another 1 unit of cost, each element will have 2 units of cost left.
+            \item Push elements into the front stack using 1 unit of cost, each element will have 1 unit of cost left.
+            \item Pop the element from the front stack using the last 1 unit of cost that this element has.
+        \end{enumerate}
+        \item Front stack is not empty. 
+        \begin{enumerate}
+            \item Pop the element from the front stack using 1 unit of cost.
+        \end{enumerate}
+    \end{enumerate}
+
+    Therefore, a sequence of $n$ \texttt{offer} operations is $5 \cdot n = O(n)$ and a sequence of $n$ \texttt{poll} operations is $1 \cdot n = O(n)$ (we have to pay only for one \texttt{isEmpty} operation).
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022
+\end{thebibliography}
+
+\end{document}
