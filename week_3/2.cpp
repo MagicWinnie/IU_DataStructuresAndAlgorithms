@@ -117,6 +117,13 @@ public:
     {
         return keys;
     }
+    vector<Entry<K, V>> get_entries()
+    {
+        vector<Entry<K, V>> res;
+        for (auto &x : keys)
+            res.push_back(get(x));
+        return res;
+    }
 };
 
 int main()
