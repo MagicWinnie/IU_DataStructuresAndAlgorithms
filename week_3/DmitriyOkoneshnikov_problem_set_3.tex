@@ -73,9 +73,9 @@
 
     \textbf{Answer.}
 
-    The average case time complexity of \textcolor{blue}{secret}: $\Theta(1 + \alpha)$.
+    The average case time complexity of \textcolor{blue}{secret}: $\Theta(n(1 + \alpha))$.
 
-    The worst case for the arrangement of values stored in M is when hash table size is 1 and therefore, all the elements are stored in one linked list of size n. Then each time you would have to traverse through at worst n elements (time complexity $O(n^2)$).
+    The worst case for the arrangement of values stored in M is when hash table size is 1 and therefore, all the elements are stored in one linked list of size n. Then each time you would have to traverse through at worst n elements (time complexity $\Theta(n^2)$).
 
     \item Consider a hash table with $13$ slots and the hash function $h(k) = (k^2 + k + 3) \mod 13$. Show the state of the hash table after inserting the keys (in this order)
     \[5, 28, 19, 15, 20, 33, 12, 17, 10, 13, 3, 33\]
