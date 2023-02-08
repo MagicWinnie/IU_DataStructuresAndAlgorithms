@@ -1,0 +1,116 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [2]{\color{blue}},
+    keywordstyle = [3]{\color{red}},
+    keywordstyle = [4]{\color{teal}},
+    morekeywords = [2]{secret},
+    morekeywords = [3]{repeat, until, return},
+    morekeywords = [4]{get},
+    moredelim    = [s][\color{ForestGreen}\it]{/*}{*/}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+\date{February 06-07, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 3. Problem set}
+
+\begin{enumerate}
+    \item Consider the following algorithm (see pseudocode conventions in [\citetalias{Cormen}, Section 2.1]). The inputs to this algorithm are a map $M$ and a key $k$. Additionally, assume the following:
+
+    \begin{enumerate}
+        \item The map $M$ uses the same data type both for keys and for values.
+        \item The map $M$ is not empty and contains $n$ distinct keys.
+        \item The map $M$ is represented as a hashtable with load factor $\alpha$.
+        \item The map $M$ resolves collisions via chaining [\citetalias{Cormen}, Section 11.2].
+        \item The set of keys stored in $M$ is equal to the set of values stored in $M$.
+    \end{enumerate}
+
+    \begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=1]
+    /* $\color{ForestGreen}{M}$ is a map with a load factor $\color{ForestGreen}{\alpha}$ and size $\color{ForestGreen}{n}$,
+     * $\color{ForestGreen}{k}$ is a key that may or may not be in $\color{ForestGreen}{M}$ */
+    secret(M, k):
+        counter := 0
+        last_key := k
+        repeat
+            last_key := M.get(last_key)
+            counter := counter + 1
+        until last_key = k
+        return counter
+    \end{lstlisting}
+
+    Compute the average case time complexity of \textcolor{blue}{secret}. The answer \textbf{must} use $\Theta$-notation. For the average case analysis, use \textit{independent uniform hashing}. For full grade, you may assume the worst case for the arrangement of values stored in $M$.
+
+    For extra credit, assume the average case also for the arrangement of values stored in $M$.
+
+    \textit{Optionally}, you may provide details for the computation of the running time $T(n)$. Proof for the asymptotic bound is not required for this exercise.
+
+    \textbf{Answer.}
+
+    The average case time complexity of \textcolor{blue}{secret}: $\Theta(1 + \alpha)$.
+
+    The worst case for the arrangement of values stored in M is when hash table size is 1 and therefore, all the elements are stored in one linked list of size n. Then each time you would have to traverse through at worst n elements (time complexity $O(n^2)$).
+
+    \item Consider a hash table with $13$ slots and the hash function $h(k) = (k^2 + k + 3) \mod 13$. Show the state of the hash table after inserting the keys (in this order)
+    \[5, 28, 19, 15, 20, 33, 12, 17, 10, 13, 3, 33\]
+    with collisions resolved by linear probing [\citetalias{Cormen}, Section 11.4].
+
+    \textbf{Answer.}
+    
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+        Index & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+        \hline
+        Key & 10 & 33 & 3 & 12 & 13 &  & 19 & 5 & 20 & 28 & 15 & 33 & 17 \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \item In your own words, explain how it is possible to implement deletion of a key-value pair from a hashtable with $O(1)$ worst case time complexity if collision resolution is implemented using chaining?
+
+    \textbf{Answer.} 
+
+    It is possible to remove a key-value pair from a hashtable with separate chaining collision resolving with $O(1)$ worst case time complexity by using doubly linked lists and passing to the \textsc{remove} method a pointer to the node containing the key-value pair.
+
+    This way we can, without traversing through the list, directly access (with time complexity of $O(1)$) the node we want to remove. Let us assume this node has index of $i$. Then we just need to assign the $i - 1$ node's next element pointer to $i + 1$ node and the $i + 1$ node's previous element pointer to $i - 1$ node.
+
+    Therefore, the time complexity of this removal is always $O(1)$.
+    
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022
+\end{thebibliography}
+
+\end{document}
