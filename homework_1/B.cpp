@@ -56,7 +56,7 @@ template <typename K, typename V>
 class HashMap
 {
 private:
-    int CAPACITY = 52127 / 8 + 1;
+    int CAPACITY = 10079;
     vector<list<Entry<K, V>>> vec;
     int _size = 0;
 
@@ -64,6 +64,16 @@ private:
     {
         size_t key_hash = hash<K>()(key);
         return key_hash % CAPACITY;
+    }
+    void rehash()
+    {
+        CAPACITY *= 2;
+        vector<list<Entry<K, V>>> tmp = vec;
+        vec.clear();
+        vec.resize(CAPACITY, list<Entry<K, V>>(0, Entry<K, V>()));
+        for (list<Entry<K, V>> &lst : vec)
+            for (Entry<K, V> &entry : lst)
+                put(entry.get_key(), entry.get_value());
     }
 
 public:
@@ -91,6 +101,8 @@ public:
     }
     Entry<K, V>& put(K key, V value)
     {
+        if (_size / CAPACITY > 0.75)
+            rehash();
         int key_index = hash_function(key);
         for (auto &elem : vec[key_index])
         {
