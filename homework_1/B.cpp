@@ -56,7 +56,7 @@ template <typename K, typename V>
 class HashMap
 {
 private:
-    int CAPACITY = 10079;
+    int CAPACITY = 10007;
     vector<list<Entry<K, V>>> vec;
     int _size = 0;
 
@@ -71,7 +71,7 @@ private:
         vector<list<Entry<K, V>>> tmp = vec;
         vec.clear();
         vec.resize(CAPACITY, list<Entry<K, V>>(0, Entry<K, V>()));
-        for (list<Entry<K, V>> &lst : vec)
+        for (list<Entry<K, V>> &lst : tmp)
             for (Entry<K, V> &entry : lst)
                 put(entry.get_key(), entry.get_value());
     }
