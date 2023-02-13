@@ -56,7 +56,7 @@ template <typename K, typename V>
 class HashMap
 {
 private:
-    int CAPACITY = 10007;
+    int CAPACITY = 1;
     vector<list<Entry<K, V>>> vec;
     int _size = 0;
 
