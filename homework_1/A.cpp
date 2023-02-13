@@ -5,11 +5,13 @@
 
 using namespace std;
 
+// Template for Stack ADT implemented using singly linked list
 template <typename T>
 class Stack
 {
 private:
     int _size;
+    // Struct of one node
     struct list
     {
         T val;
@@ -45,6 +47,7 @@ public:
     void push(T e)
     {
         struct list *temp = new struct list();
+        // Special case: stack is empty
         if (_size == 0)
         {
             temp->val = e;
@@ -82,6 +85,7 @@ public:
     }
 };
 
+// Return index of string in arr
 int findElement(string *arr, int n, string x)
 {
     for (int i = 0; i < n; i++)
@@ -92,9 +96,8 @@ int findElement(string *arr, int n, string x)
     return -1;
 }
 
-void readInput()
+void solver()
 {
-
     int n, k;
     cin >> n >> k;
 
@@ -106,9 +109,10 @@ void readInput()
         opening[i] = open;
         closing[i] = close;
     }
-    cin.ignore(1, '\n');
-    Stack<string> stack;
+    cin.ignore(1, '\n'); // remove \n to use getline after cin
+
     int i = 0, j = 0;
+    Stack<string> stack;
     string line, tmp;
     for (i = 0; i < k; i++)
     {
@@ -140,24 +144,28 @@ void readInput()
             }
             else if (type == 1 and stack.isEmpty())
             {
-                cout << "Error in line " << i + 1 << ", column " << j + 1 << ": unexpected closing token " << tmp << "." << endl;
+                cout << "Error in line " << i + 1 << ", column " << j + 1 <<
+                    ": unexpected closing token " << tmp << "." << endl;
                 return;
             }
             else if (type == 1 and closing[findElement(opening, n, stack.peek())] != tmp)
             {
-                cout << "Error in line " << i + 1 << ", column " << j + 1 << ": expected " << closing[findElement(opening, n, stack.peek())] << " but got " << tmp << "." << endl;
+                cout << "Error in line " << i + 1 << ", column " << j + 1 <<
+                    ": expected " << closing[findElement(opening, n, stack.peek())] <<
+                   " but got " << tmp << "." << endl;
                 return;
             }
             else if (type == 1)
             {
                 stack.pop();
             }
-            j += tmp.length() + 1;
+            j += tmp.length() + 1; // + 1 for space between words
         }
     }
     if (!stack.isEmpty())
     {
-        cout << "Error in line " << i << ", column " << j + 1 << ": expected " << closing[findElement(opening, n, stack.peek())] << " but got end of input." << endl;
+        cout << "Error in line " << i << ", column " << j + 1 << ": expected " <<
+            closing[findElement(opening, n, stack.peek())] << " but got end of input." << endl;
         return;
     }
     cout << "The input is properly balanced." << endl;
@@ -165,6 +173,6 @@ void readInput()
 
 int main(void)
 {
-    readInput();
+    solver();
     return 0;
 }
