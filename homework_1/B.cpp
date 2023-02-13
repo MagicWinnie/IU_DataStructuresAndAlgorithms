@@ -70,7 +70,7 @@ private:
         CAPACITY *= 2;
         vector<list<Entry<K, V>>> tmp = vec;
         vec.clear();
-        vec.resize(CAPACITY, list<Entry<K, V>>(0, Entry<K, V>()));
+        vec.resize(CAPACITY, list<Entry<K, V>>(0));
         for (list<Entry<K, V>> &lst : tmp)
             for (Entry<K, V> &entry : lst)
                 put(entry.get_key(), entry.get_value());
@@ -79,7 +79,7 @@ private:
 public:
     HashMap()
     {
-        vec.resize(CAPACITY, list<Entry<K, V>>(0, Entry<K, V>()));
+        vec.resize(CAPACITY, list<Entry<K, V>>(0));
     }
     int size() const
     {
@@ -97,11 +97,12 @@ public:
             if (elem.get_key() == key)
                 return elem;
         }
+        _size++;
         return put(key, V());
     }
     Entry<K, V>& put(K key, V value)
     {
-        if (_size / CAPACITY > 0.75)
+        if (_size / CAPACITY > 8)
             rehash();
         int key_index = hash_function(key);
         for (auto &elem : vec[key_index])
