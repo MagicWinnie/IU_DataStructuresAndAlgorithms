@@ -6,47 +6,59 @@
 
 using namespace std;
 
-// Template for HashMap key-value pair entry
+// Template class for HashMap key-value pair entry
 template <typename K, typename V>
 class Entry
 {
 private:
     K key;
     V value;
-    typename list<Entry<K, V>>::iterator iterator;
+    typename list<Entry<K, V>>::iterator iterator; // iterator to the entry in HashMap's `bucket`
 
 public:
+    // Default constructor, initialize with default values
     Entry()
     {
         this->key = K();
         this->value = V();
     }
+    // Constructor, initialize with key and value.
     Entry(K key, V value)
     {
         this->key = key;
         this->value = value;
     }
+    // Method that returns the key.
+    // Time complexity O(1)
     K &get_key()
     {
         return key;
     }
+    // Method that returns the value.
+    // Time complexity O(1)
     V &get_value()
     {
         return value;
     }
+    // Method that sets the value.
+    // Time complexity O(1)
     void set_value(V value)
     {
         this->value = value;
     }
+    // Method that sets the iterator.
+    // Time complexity O(1)
     void set_iterator(typename list<Entry<K, V>>::iterator iterator)
     {
         this->iterator = iterator;
     }
+    // Method that returns the iterator.
+    // Time complexity O(1)
     typename list<Entry<K, V>>::iterator& get_iterator()
     {
         return iterator;
     }
-    // Method to overload the cout operator, so the entry is printed
+    // Method that overload the cout operator, so the entry is printed
     // in the following format: <key: value>
     friend auto operator<<(std::ostream &os, Entry<K, V> &entry) -> std::ostream &
     {
@@ -55,23 +67,26 @@ public:
     }
 };
 
-// Template for HashMap ADT
+// Template class for HashMap ADT
 template <typename K, typename V>
 class HashMap
 {
 private:
-    vector<list<Entry<K, V>>> vec;
+    vector<list<Entry<K, V>>> vec; // vector of `buckets`
     int CAPACITY = 1; // number of `buckets` in the table
     int _size = 0; // number of elements currently in table
 
+    // Method that returns a hash in range [0, CAPACITY)
+    // for the specified key. Uses the hash function from std
     int hash_function(K key)
     {
         size_t key_hash = hash<K>()(key);
         return key_hash % CAPACITY;
     }
-    // Method to rehash the hashmap
-    // Double the table size, and copy the elements
-    // from old table to a new one using new hash function
+    // Method that rehashes the HashMap.
+    // It doubles the HashMap size, and copies the elements
+    // from the old HashMap to the new one using the new hash function.
+    // Time complexity: average case O(1 + alpha)
     void rehash()
     {   
         CAPACITY *= 2;
@@ -84,21 +99,29 @@ private:
     }
 
 public:
+    // Default constructor.
+    // Resizes the vector to size CAPACITY, filling it
+    // with the default value
     HashMap()
     {
         vec.resize(CAPACITY, list<Entry<K, V>>(0));
     }
+    // Method that returns the number of elements in HashMap.
+    // Time complexity: worst case O(1)
     int size() const
     {
         return _size;
     }
+    // Method that returns true if the HashMap is empty.
+    // Time complexity: worst case O(1)
     bool isEmpty() const
     {
         return _size == 0;
     }
-    // Method to get a reference to an element by key
+    // Method that returns a reference to an element by key.
     // Puts a new key with default value if it
-    // does not exist and returns a reference to it
+    // does not exist and returns a reference to it.
+    // Time complexity: average case O(1 + alpha)
     Entry<K, V> &get(K key)
     {
         int key_index = hash_function(key);
@@ -110,9 +133,10 @@ public:
         _size++;
         return put(key, V());
     }
-    // Method to put a value into the hashmap
-    // Rehashes if needed
-    // Returns a reference to the old/new entry
+    // Method that puts a value into the HashMap.
+    // Rehashes if needed.
+    // Returns a reference to the old/new entry.
+    // Time complexity: average case O(1 + alpha)
     Entry<K, V> &put(K key, V value)
     {
         if (_size / CAPACITY > 8)
@@ -132,12 +156,16 @@ public:
         _size++;
         return vec[key_index].back();
     }
+    // Method that removes an entry from HashMap.
+    // Time complexity: worst case O(1)
     void remove(Entry<K, V> entry)
     {
         int key_index = hash_function(entry.get_key());
         vec[key_index].erase(entry.get_iterator());
         _size--;
     }
+    // Method that returns a vector of entries from HashMap.
+    // Time complexity: average case O(1 + alpha)
     vector<Entry<K, V>> get_entries()
     {
         vector<Entry<K, V>> res;
@@ -148,18 +176,19 @@ public:
     }
 };
 
+// Function that reads the input and parses it into a HashMap
 HashMap<string, HashMap<string, double>> readInput()
 {
-    // The key of the outer hashmap holds the date.
-    // The value of the outer hashmap is an another hashmap
-    // The inner hashmap has a key "cost" that has a sum of costs
+    // The key of the outer HashMap holds the date.
+    // The value of the outer HashMap is an another HashMap
+    // The inner HashMap has a key "cost" that has a sum of costs
     // and other keys corresponding to the IDs with a value of 1,
     // in order to keep the unique IDs
     HashMap<string, HashMap<string, double>> map;
 
-    int n;
-    cin >> n;
-    for (int i = 0; i < n; i++)
+    int numberOfEntries;
+    cin >> numberOfEntries;
+    for (int i = 0; i < numberOfEntries; i++)
     {
         string date, time, id, cost, title;
         cin >> date >> time >> id >> cost;
@@ -176,6 +205,7 @@ HashMap<string, HashMap<string, double>> readInput()
     return map;
 }
 
+// Function that prints the content of HashMap in specified format
 void printEntries(HashMap<string, HashMap<string, double>> &map)
 {
     for (Entry<string, HashMap<string, double>> &outer_entry : map.get_entries())
@@ -191,6 +221,8 @@ void printEntries(HashMap<string, HashMap<string, double>> &map)
 
 int main(void)
 {
+    // The code is tested using only the tasks' example tests on Codeforces:
+    // https://codeforces.com/group/v3tYbkCHj3/contest/427350/problem/B
     HashMap<string, HashMap<string, double>> map = readInput();
     printEntries(map);
     return 0;
