@@ -31,7 +31,7 @@ public:
     // Destructor.
     // Traverse through the Stack and delete every node,
     // finally delete the head.
-    // Time complexity O(n)
+    // Time complexity: worst case O(n)
     ~Stack()
     {
         struct list *curr = head;
@@ -44,19 +44,19 @@ public:
         delete curr;
     }
     // Method that returns the size of Stack.
-    // Time complexity O(1)
+    // Time complexity: worst case O(1)
     int size()
     {
         return _size;
     }
     // Method that returns true if Stack is empty.
-    // Time complexity O(1)
+    // Time complexity: worst case O(1)
     bool isEmpty()
     {
         return _size == 0;
     }
     // Method that adds an element to head of Stack.
-    // Time complexity O(1)
+    // Time complexity: worst case O(1)
     void push(T e)
     {
         struct list *temp = new struct list();
@@ -75,11 +75,11 @@ public:
         _size++;
     }
     // Method that removes and returns an element from head of Stack.
-    // Time complexity O(1)
+    // Time complexity: worst case O(1)
     T pop()
     {
         if (head == nullptr)
-            return T();
+            return T(); // return default value of type T
         struct list *temp = head->next;
         T val = head->val;
         head = temp;
@@ -87,11 +87,11 @@ public:
         return val;
     }
     // Method that returns an element from head of Stack.
-    // Time complexity O(1)
+    // Time complexity: worst case O(1)
     T peek()
     {
         if (head == nullptr)
-            return T();
+            return T(); // return default value of type T
         return head->val;
     }
     // Method that overloads cout operator for Stack.
