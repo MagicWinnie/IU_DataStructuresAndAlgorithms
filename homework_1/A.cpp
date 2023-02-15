@@ -5,13 +5,15 @@
 
 using namespace std;
 
-// Template for Stack ADT implemented using singly linked list
+// Template class for Stack ADT.
+// Implemented using singly linked list
 template <typename T>
 class Stack
 {
 private:
+    // Number of elements in Stack
     int _size;
-    // Struct of one node
+    // Struct for a one node
     struct list
     {
         T val;
@@ -20,11 +22,16 @@ private:
     struct list *head;
 
 public:
+    // Default constructor
     Stack()
     {
         _size = 0;
         head = nullptr;
     }
+    // Destructor.
+    // Traverse through the Stack and delete every node,
+    // finally delete the head.
+    // Time complexity O(n)
     ~Stack()
     {
         struct list *curr = head;
@@ -36,14 +43,20 @@ public:
         }
         delete curr;
     }
+    // Method that returns the size of Stack.
+    // Time complexity O(1)
     int size()
     {
         return _size;
     }
+    // Method that returns true if Stack is empty.
+    // Time complexity O(1)
     bool isEmpty()
     {
         return _size == 0;
     }
+    // Method that adds an element to head of Stack.
+    // Time complexity O(1)
     void push(T e)
     {
         struct list *temp = new struct list();
@@ -61,113 +74,139 @@ public:
         head = temp;
         _size++;
     }
+    // Method that removes and returns an element from head of Stack.
+    // Time complexity O(1)
     T pop()
     {
+        if (head == nullptr)
+            return T();
         struct list *temp = head->next;
         T val = head->val;
         head = temp;
         _size--;
         return val;
     }
+    // Method that returns an element from head of Stack.
+    // Time complexity O(1)
     T peek()
     {
+        if (head == nullptr)
+            return T();
         return head->val;
     }
-    friend auto operator<<(std::ostream &os, Stack const &s) -> std::ostream &
+    // Method that overloads cout operator for Stack.
+    // Prints elements in one line, separated by spaces
+    friend ostream &operator<<(ostream &out, Stack const &stack)
     {
-        struct list *temp = s.head;
-        while (temp != nullptr)
+        struct list *element = stack.head;
+        while (element != nullptr)
         {
-            os << temp->val << " ";
-            temp = temp->next;
+            out << element->val << " ";
+            element = element->next;
         }
-        return os;
+        return out;
     }
 };
 
-// Return index of string in arr
-int findElement(string *arr, int n, string x)
+// Function that returns the index of a string in an array of strings.
+// If not found returns -1
+int findElement(string *arrayOfDelimiters, int lengthOfArray, string element)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < lengthOfArray; i++)
     {
-        if (arr[i] == x)
+        if (arrayOfDelimiters[i] == element)
             return i;
     }
     return -1;
 }
 
+// Function that does the reading and processing
 void solver()
 {
-    int n, k;
-    cin >> n >> k;
+    int numberOfDelimiters, numberOfTokenLines;
+    cin >> numberOfDelimiters >> numberOfTokenLines;
 
-    string opening[n], closing[n];
-    for (int i = 0; i < n; i++)
+    // Input delimiters
+    string openingDelimiters[numberOfDelimiters], closingDelimiters[numberOfDelimiters];
+    for (int i = 0; i < numberOfDelimiters; i++)
     {
-        string open, close;
-        cin >> open >> close;
-        opening[i] = open;
-        closing[i] = close;
+        string openDelimiter, closeDelimiter;
+        cin >> openDelimiter >> closeDelimiter;
+
+        openingDelimiters[i] = openDelimiter;
+        closingDelimiters[i] = closeDelimiter;
     }
     cin.ignore(1, '\n'); // remove \n to use getline after cin
 
-    int i = 0, j = 0;
+    // Read line of tokens and process them
+    int lineNumber = 0, columnNumber = 0;
     Stack<string> stack;
-    string line, tmp;
-    for (i = 0; i < k; i++)
+    string line, token;
+    for (lineNumber = 0; lineNumber < numberOfTokenLines; lineNumber++)
     {
+        // Read the whole line
         getline(cin, line);
         istringstream iss(line);
 
-        j = 0;
-        while (iss >> tmp)
+        // Traverse through each token (spaces not included)
+        columnNumber = 0;
+        while (iss >> token)
         {
             int type = 0; // -1: open; 1: close
             int index = 0;
 
-            index = findElement(opening, n, tmp);
+            // To solve the task a stack is used. When we find an opening delimiter
+            // we push onto the stack. Then when we find a closing delimiter we
+            // compare if both opening and closing delimiters are of the same type.
+            // If so we remove the opening delimiter. If anything goes wrong or
+            // at the end stack is not empty, then the delimiters are not balanced
+            index = findElement(openingDelimiters, numberOfDelimiters, token);
             if (index != -1)
             {
                 type = -1;
             }
             else
             {
-                index = findElement(closing, n, tmp);
+                index = findElement(closingDelimiters, numberOfDelimiters, token);
                 if (index != -1)
                 {
                     type = 1;
                 }
             }
+            
             if (type == -1)
             {
-                stack.push(tmp);
+                stack.push(token);
             }
             else if (type == 1 and stack.isEmpty())
             {
-                cout << "Error in line " << i + 1 << ", column " << j + 1 <<
-                    ": unexpected closing token " << tmp << "." << endl;
+                cout << "Error in line " << lineNumber + 1 << ", column " << columnNumber + 1 <<
+                    ": unexpected closing token " << token << "." << endl;
                 return;
             }
-            else if (type == 1 and closing[findElement(opening, n, stack.peek())] != tmp)
+            else if (type == 1 and closingDelimiters[findElement(openingDelimiters, numberOfDelimiters, stack.peek())] != token)
             {
-                cout << "Error in line " << i + 1 << ", column " << j + 1 <<
-                    ": expected " << closing[findElement(opening, n, stack.peek())] <<
-                   " but got " << tmp << "." << endl;
+                cout << "Error in line " << lineNumber + 1 << ", column " << columnNumber + 1 <<
+                    ": expected " << closingDelimiters[findElement(openingDelimiters, numberOfDelimiters, stack.peek())] <<
+                    " but got " << token << "." << endl;
                 return;
             }
             else if (type == 1)
             {
                 stack.pop();
             }
-            j += tmp.length() + 1; // + 1 for space between words
+
+            columnNumber += token.length() + 1; // + 1 for space between words
         }
     }
+
     if (!stack.isEmpty())
     {
-        cout << "Error in line " << i << ", column " << j + 1 << ": expected " <<
-            closing[findElement(opening, n, stack.peek())] << " but got end of input." << endl;
+        cout << "Error in line " << lineNumber << ", column " << columnNumber + 1 << ": expected " <<
+            closingDelimiters[findElement(openingDelimiters, numberOfDelimiters, stack.peek())] << " but got end of input." << endl;
         return;
     }
+    
     cout << "The input is properly balanced." << endl;
 }
 
