@@ -212,6 +212,8 @@ void solver()
 
 int main(void)
 {
+    // The code is tested using only the tasks' example tests on Codeforces:
+    // https://codeforces.com/group/v3tYbkCHj3/contest/427350/problem/A
     solver();
     return 0;
 }
