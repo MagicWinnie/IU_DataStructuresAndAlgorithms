@@ -60,7 +60,7 @@ public:
     }
     // Method that overload the cout operator, so the entry is printed
     // in the following format: <key: value>
-    friend auto operator<<(std::ostream &os, Entry<K, V> &entry) -> std::ostream &
+    friend ostream &operator<<(ostream &os, Entry<K, V> &entry)
     {
         os << "<" << entry.get_key() << ": " << entry.get_value() << ">";
         return os;
