@@ -1,0 +1,265 @@
+\documentclass{article}
+
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage{emoji}
+\usepackage{longtable}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [1]{\normalfont\bfseries},
+    keywordstyle = [2]{\normalfont\it},
+    keywordstyle = [3]{\normalfont},
+    morekeywords = [1]{repeat, for, to, return, if},
+    morekeywords = [2]{M, R, E, i, j, k, dp},
+    morekeywords = [3]{let},
+    morecomment = [l][\color{BrickRed}\it]{//}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+\date{February 21-22, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 5. Problem set}
+
+The National Health Council wants to improve health care in three of the most underdeveloped regions. Currently it has five medical teams available to allocate among such regions to improve their medical care, health education, and training programs. Therefore, the council needs to determine how many teams (if any) to allocate to each of these regions to maximize the total effectiveness of the five teams. The teams must be kept intact, so the number allocated to each region must be an integer.
+
+The measure of performance being used is additional person-years of life. (For a particular region, this measure equals the increased life expectancy in years times the region’s population.) The following table gives the estimated additional person-years of life (in multiples of 1,000) for each region for each possible allocation of medical teams.
+
+\begin{enumerate}
+    \item Describe a general algorithm for any number $M$ of available medical teams, any number $R$ of regions and table \texttt{E} with estimates:
+    \begin{enumerate}
+        \item Summarize the idea for a naive recursive algorithm.
+
+        \textbf{Answer.}
+        
+        The idea for a naive recursive algorithm is simple: we need to brute-force every allocation of teams through the regions. It is obvious that we need to allocate all the teams to get maximal effectiveness. So we have to find all allocations $\sum_{i=1}^{R}M_i = M$, where $M_i$ is number of teams in region $i$, and find the one with the maximal effectiveness by accessing the table \texttt{E}.
+
+        The base case for this algorithm will be when we have allocated all the teams into the regions. In the base case we will return the total additional person-years of life if we use this allocation.
+
+        Then we add one more team to a region and initiate the recursion call with this new allocation. We will have to repeat this process for all other regions.
+        
+        \item Identify overlapping subproblems.
+
+        \textbf{Answer.}
+
+        The overlapping subproblems appear because we can get to the same allocation of teams in different ways and, therefore, counting the total effectiveness of this allocation several times.
+
+        \item Write down pseudocode for the dynamic programming algorithm that solves the problem (top-down or bottom-up). It is enough to compute maximum performance without specifying team allocation.
+
+        \textbf{Answer.}
+        
+        Let's add memoization to our naive recursive algorithm (top-down approach):
+\begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=1]
+Memoized-Team-Allocation(M,R,E)
+    let dp[0:R,0:M] be a new table // dp[i,j] is the maximum additional
+    // person-years of life that we can get by allocating j medical teams
+    // in the first i regions
+    for i = 1 to R:
+        for j = 1 to M:
+            for k = 0 to j:
+                dp[i,j] = max{dp[i,j],dp[i-1,j-k]+E[k,i-1]}
+    return dp[R,M]
+    
+\end{lstlisting}
+    \end{enumerate}
+    \item Provide asymptotic worst-case time complexity with justification
+    \begin{enumerate}
+        \item for the naive recursive algorithm
+
+        \textbf{Solution.}
+
+        Due to our base case and the fact that we add only one team a time, the $R$-ary (as we call our function $R$ times from one recursion call) recursion tree has a height of $M$. Therefore, the maximum number of nodes is $R^M$. The base case is $O(R)$, so the total worst-time complexity is $O(R^M\cdot R) = O(R^{M + 1}) = O(R^M)$ \emoji{scream}. 
+
+        \textbf{Answer.} $O(R^M)$
+        
+        \item for the dynamic programming algorithm
+
+        \textbf{Solution.}
+
+        It is easy to see that we have three nested loops going from 1 to $R$, 1 to $M$ and 1 to $M$ (worst case), therefore, the worst-time complexity is $O(RM^2)$.
+
+        \textbf{Answer.} $O(RM^2)$
+        
+    \end{enumerate}
+    \item Apply the dynamic programming algorithm to an instance of the problem below. You must provide the table with solutions for subproblems that are computed in the algorithm, as well as give the final answer to the problem.
+    \begin{center}
+        \begin{tabular}{|c||c|c|c|}
+        \hline
+        Number of Teams & Region A & Region B & Region C \\
+        \hline
+        \hline
+        0 & 0 & 0 & 0 \\
+        \hline
+        1 & 45 & 50 & 20 \\
+        \hline
+        2 & 70 & 70 & 45 \\
+        \hline
+        3 & 90 & 80 & 75 \\
+        \hline
+        4 & 105 & 100 & 110 \\
+        \hline
+        5 & 120 & 130 & 150 \\
+        \hline
+        \end{tabular}
+    \end{center}
+
+    \textbf{Solution.}
+
+    \begin{center}
+        \begin{longtable}{|c|c|c|}
+        \hline 
+        $i$ & $j$ & $dp$ \\ 
+        \hline
+        \hline
+        \endfirsthead
+        
+        \hline 
+        $i$ & $j$ & $dp$ \\ 
+        \hline
+        \hline
+        \endhead
+
+        1 & 1 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        1 & 2 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        1 & 3 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        1 & 4 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        1 & 5 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        2 & 1 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        2 & 2 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        2 & 3 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        2 & 4 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        2 & 5 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 0 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        3 & 1 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 50 & 0 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        3 & 2 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 50 & 95 & 0 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        3 & 3 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 50 & 95 & 120 & 0 & 0
+        \end{matrix}$ \\
+        \hline
+        3 & 4 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 50 & 95 & 120 & 140 & 0
+        \end{matrix}$ \\
+        \hline
+        3 & 5 & $\begin{matrix}
+        0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 45 & 70 & 90 & 105 & 120 \\
+        0 & 50 & 95 & 120 & 140 & 160 \\
+        0 & 50 & 95 & 120 & 140 & 170
+        \end{matrix}$ \\
+        \hline
+        
+        \end{longtable}
+    \end{center}
+
+    \textbf{Answer.} 170
+    
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022
+\end{thebibliography}
+
+\end{document}
