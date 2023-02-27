@@ -53,8 +53,9 @@ void counting_sort(vector<Pair> &vec, int index)
         C[(vec[i].H / index) % 10]--;
     }
 
-    // reverse order as we pop in the outer counting sort from behind
-    for (int i = n - 1; i >= 0; i--)
+    // when we will get the elements from the outer counting sort
+    // the elements will be in the right order
+    for (int i = 0; i < n; i++)
     {
         vec[i].H = B[i];
         // getting from the back as it is O(1) to remove from behind
