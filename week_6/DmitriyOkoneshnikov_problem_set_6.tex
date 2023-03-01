@@ -1,0 +1,189 @@
+\documentclass{article}
+
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage{longtable}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [1]{\normalfont\bfseries},
+    keywordstyle = [2]{\normalfont\it},
+    keywordstyle = [3]{\normalfont},
+    morekeywords = [1]{repeat, for, to, return, if},
+    morekeywords = [2]{A, B, N, M, output, accum, count, prev, i, j, k, d, start, end},
+    morekeywords = [3]{let},
+    morecomment = [l][\color{BrickRed}\it]{//}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+\date{February 21-22, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 6. Problem set}
+
+\begin{enumerate}
+    \item Consider a modification of \textsc{Merge-Sort} algorithm [\citetalias{Cormen}, Section 2.3] that stops recursion when the size of subarray becomes less than or equal to $k$. For arrays of size $\leq k$, the modified algorithm performs \textsc{Bubble-Sort}. Answer the following questions about the modified algorithm:
+    \begin{enumerate}
+        \item What is the worst case time complexity in terms of $n$ and $k$?
+
+        \textbf{Answer.} $\Theta(\frac{n}{k}\log{\frac{n}{k}} + nk)$
+        
+        \item What is the best case time complexity in terms of $n$ and $k$?
+
+        \textbf{Answer.} $\Theta(\frac{n}{k}\log{\frac{n}{k}} + n)$
+    \end{enumerate}
+
+    The answer should be given using $\Theta$-notation. No justification is required.
+
+    \item Apply counting sort to the following input array where each column corresponds to one item with its numeric key and single-character satellite data:
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+            \hline
+             6 & 0 & 6 & 3 & 0 & 6 & 1 & 3 & 2 & 0 \\
+             \hline
+             S & I & A & Y & S & ! & U & D & D & T \\
+             \hline
+        \end{tabular}
+    \end{center}
+
+    You \textbf{must} demonstrate the final state of the auxiliary arrays used in the algorithm, as well as the output of the array
+
+    \textbf{Solution.}
+
+    First we populate the \texttt{count} array, its length is 6 + 1 (6 is max value of original array):
+
+    \[\{3, 1, 1, 2, 0, 0, 3\}\]
+
+    Then we get the \texttt{accum} array, its length is equal to \texttt{count} array:
+
+    \[\{3, 4, 5, 7, 7, 7, 10\}\]
+
+    Then we populate the output arrays. The final state is following:
+    \begin{center}
+        Final state of \texttt{count} (not changed): $\{3, 1, 1, 2, 0, 0, 3\}$
+
+        Final state of \texttt{accum}: $\{0, 3, 4, 5, 7, 7, 7\}$
+
+        Sorted numeric keys: $\{0, 0, 0, 1, 2, 3, 3, 6, 6, 6\}$
+
+        Sorted satellite data: $\{I, S, T, U, D, Y, D, S, A, !\}$
+    \end{center}
+    
+    \item Let $A$ be an array of positive integers. Different integers may have different number of digits, but the total number of digits over all the integers in $A$ is $n$. Propose an algorithm to sort the array in $\Theta(n)$ time, based on \textsc{Radix-Sort} and \textsc{Counting-Sort}. More precisely:
+    \begin{enumerate}
+        \item Briefly (in one paragraph) summarise the idea of the algorithm \textit{in your own words}.
+
+        \textbf{Answer.}
+
+        Let us firstly sort the array using \textsc{Counting-Sort} based on amount of digits of a number. This gives us groups of numbers having the same amount of digits, such that, firstly we have numbers with 1 digit, then 2 digits, and so on. Finally, let us sort every group using \textsc{Radix-Sort}. Therefore, we get our sorted array.
+        
+        \item Provide complete pseudocode of the algorithm. You may use the pseudocode from [\citetalias{Cormen}, Chapter 8] to help with a starting point of your pseudocode.
+
+        \textbf{Answer.}
+
+\begin{lstlisting}[numbers=left,language={},style=pseudo,mathescape=true,firstnumber=1]
+Sort(A, N) // N is size of A
+    let B[1:N] be a new array
+    B := Counting-Sort-Length(A, N) // B is now sorted by length of a number
+    prev := 0 // index of start of group
+    for i := 2 to N:
+        if Get-Number-Of-Digits{B[i - 1]} < Get-Number-Of-Digits{B[i]}:
+            B := Radix-Sort(B, N, Get-Number-Of-Digits{B[prev]}, prev, i)
+            prev := i
+    B := Radix-Sort(B, Get-Number-Of-Digits{B[prev]}, prev, N)
+    return B
+
+Counting-Sort-Length(A, N)
+    M := Get-Number-Of-Digits{max{A}} + 1 // length of the maximal number in array
+    let count[1:M] be a new array
+    let accum[1:M] be a new array
+    let output[1:N] be a new array
+    for i := 1 to M:
+        count[i] := 0
+        accum[i] := 0
+    for i := 1 to N:
+        count[Get-Number-Of-Digits{A[i]}] += 1
+    for i := 2 to M:
+        accum[i] := count[i] + accum[i - 1]
+    for i := N to 1:
+        output[accum[Get-Number-Of-Digits{A[i]}]] := A[i]
+        accum[Get-Number-Of-Digits{A[i]}] -= 1
+    return output
+
+Radix-Sort(A, N, d, start, end)
+    let B[1:N] be a new array
+    for i := 0 to d - 1:
+        B := Counting-Sort(B, N, i, start, end)
+    return B
+
+Counting-Sort(A, N, index, start, end)
+    M := 10
+    let count[1:M] be a new array
+    let accum[1:M] be a new array
+    let tmp[start:end - 1] be a new array
+    let output[1:N] be a new array
+    output := A
+    for i := 1 to M:
+        count[i] := 0
+        accum[i] := 0
+    for i := start to end - 1:
+        count[Get-I-th-Digit{A[i], index}] += 1
+    for i := 2 to M:
+        accum[i] := count[i] + accum[i - 1]
+    for i := end - 1 to start:
+        tmp[accum[Get-I-th-Digit{A[i], index}]] := A[i]
+        accum[Get-I-th-Digit{A[i], index}] -= 1
+    for i := start to end - 1:
+        output[i] := tmp[i - start + 1]
+    return output
+\end{lstlisting}
+        
+        \item \textbf{(+0.5\% extra credit)} Justify the time complexity.
+
+        \textbf{Solution.}
+
+        Suppose $p$ is amount of numbers in the array.
+
+        The \textsc{Counting-Sort} is $\Theta(p + n)$, but it is obvious that $p \leq n$,\\
+        so $\Theta(p + n) = \Theta(n)$.
+
+        Let us calculate the time complexity of running \textsc{Radix-Sort} for every group. Time complexity of \textsc{Radix-Sort} for one group is $\Theta(d \cdot (N + k))$, where $d = d_i$ --- amount of digits in one number in group $i$, $N = p_i$ --- amount of numbers in group $i$, $k = 9$ --- maximum value of a digit. Or it can be rewritten as $\Theta(d_i \cdot (p_i + 9)) = \Theta(d_i \cdot p_i)$. It is obvious that $\sum{d_i \cdot p_i} = n$. Therefore, running \textsc{Radix-Sort} for all groups will be $\Theta(n)$.
+
+        The overall time complexity will be $\Theta(n) + \Theta(n) = \Theta(n)$.
+
+        \textbf{Q.E.D.}
+        
+    \end{enumerate}
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022
+\end{thebibliography}
+
+\end{document}
