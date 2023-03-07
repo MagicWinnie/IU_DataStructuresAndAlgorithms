@@ -45,7 +45,8 @@ public:
     {
         return iterator;
     }
-    friend auto operator<<(std::ostream& os, Entry<K, V> const& entry) -> std::ostream& { 
+    friend ostream &operator<<(std::ostream &os, Entry<K, V> const &entry)
+    {
         os << "<" << entry.get_key() << ": " << entry.get_value() << ">";
         return os;
     }
@@ -82,7 +83,7 @@ public:
     Entry<K, V> get(K key)
     {
         int key_index = hash_function(key);
-        for (auto &elem: vec[key_index])
+        for (auto &elem : vec[key_index])
         {
             if (elem.get_key() == key)
                 return elem;
@@ -92,7 +93,7 @@ public:
     Entry<K, V> put(K key, V value)
     {
         int key_index = hash_function(key);
-        for (auto &elem: vec[key_index])
+        for (auto &elem : vec[key_index])
         {
             if (elem.get_key() == key)
             {
@@ -126,37 +127,34 @@ public:
     }
 };
 
-void sort_entries(vector<Entry<string, int>> &vec)
-{
-    for (int i = 1; i < vec.size(); i++)
-    {
-        auto key = vec[i];
-        int j = i - 1;
-        while (j >= 0 and (vec[j].get_value() < key.get_value() || vec[j].get_value() == key.get_value() && vec[j].get_key() > key.get_key()))
-        {
-            vec[j + 1] = vec[j];
-            j -= 1;
-        }
-        vec[j + 1] = key;
-    }
-}
-
 int main()
 {
-    Map<string, int> freq;
-
     int n;
     cin >> n;
+    Map<string, int> freq;
     for (int i = 0; i < n; i++)
     {
         string word;
         cin >> word;
-        freq.put(word, freq.get(word).get_value() + 1);
+        freq.put(word, 1);
     }
-    vector<Entry<string, int>> entries = freq.get_entries();
-    sort_entries(entries);
-    for (auto &x: entries)
-        cout << x.get_key() << ' ' << x.get_value() << '\n';
+    int m, k = 0;
+    cin >> m;
+    vector<string> order_of_words(m);
+    for (int i = 0; i < m; i++)
+    {
+        string word;
+        cin >> word;
+        if (freq.get(word).get_value() == 0)
+        {
+            freq.put(word, 1);
+            order_of_words[k] = word;
+            k++;
+        }
+    }
+    cout << k << endl;
+    for (int i = 0; i < k; i++)
+        cout << order_of_words[i] << '\n';
 
     return 0;
 }

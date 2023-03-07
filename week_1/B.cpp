@@ -19,7 +19,7 @@ int main()
         top_players[i] = "none";
         top_scores[i] = -1;
     }
-    
+
     for (int i = 0; i < n; i++)
     {
         string player;

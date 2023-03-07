@@ -4,19 +4,19 @@
 
 using namespace std;
 
-template<typename T>
+template <typename T>
 class Stack
 {
-    private:
+private:
     int _size;
-    struct list 
+    struct list
     {
         T val;
-        struct list* next = nullptr;
+        struct list *next = nullptr;
     };
-    struct list* head;
+    struct list *head;
 
-    public:
+public:
     Stack()
     {
         _size = 0;
@@ -69,7 +69,8 @@ class Stack
     {
         return head->val;
     }
-    friend auto operator<<(std::ostream& os, Stack const& s) -> std::ostream& { 
+    friend ostream &operator<<(std::ostream &os, Stack const &s)
+    {
         struct list *temp = s.head;
         while (temp != nullptr)
         {
@@ -80,20 +81,20 @@ class Stack
     }
 };
 
-template<typename T>
+template <typename T>
 class Queue
 {
-    private:
+private:
     int _size;
-    struct list 
+    struct list
     {
         T val;
-        struct list* next = nullptr;
+        struct list *next = nullptr;
     };
-    struct list* head;
-    struct list* tail;
+    struct list *head;
+    struct list *tail;
 
-    public:
+public:
     Queue()
     {
         _size = 0;
@@ -149,7 +150,8 @@ class Queue
     {
         return head->val;
     }
-    friend auto operator<<(std::ostream& os, Queue const& q) -> std::ostream& { 
+    friend ostream &operator<<(std::ostream &os, Queue const &q)
+    {
         struct list *temp = q.head;
         while (temp != nullptr)
         {
@@ -211,7 +213,7 @@ int main()
                 if (stack.isEmpty())
                 {
                     cout << "Parentheses are mismatched" << endl;
-                    return -1;    
+                    return -1;
                 }
                 queue.push(stack.pop());
             }
