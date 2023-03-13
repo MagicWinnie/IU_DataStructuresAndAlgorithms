@@ -1,3 +1,4 @@
+// Dmitriy Okoneshnikov
 #include <iostream>
 
 using namespace std;
