@@ -1,5 +1,8 @@
 // Dmitriy Okoneshnikov
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
 
 using namespace std;
 
@@ -108,14 +111,21 @@ void printInfix(Node<Pair> *subtree)
 
 int main(void)
 {
-    BinarySearchTree<Pair> bst;
+    random_device rd;
+    mt19937 g(rd());
+
     int n;
     cin >> n;
+    vector<int> input(n);
+    for (int i = 0; i < n; i++)
+        cin >> input[i];
+
+    shuffle(input.begin(), input.end(), g);
+
+    BinarySearchTree<Pair> bst;
     for (int i = 0; i < n; i++)
     {
-        int tmp;
-        cin >> tmp;
-        Pair p(i + 1, tmp);
+        Pair p(i + 1, input[i]);
         bst.add(p);
     }
     bst.infix(&putIndicesInfix);
