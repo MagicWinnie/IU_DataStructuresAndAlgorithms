@@ -1,0 +1,292 @@
+\documentclass{article}
+
+\usepackage{amsmath,amsfonts}
+\usepackage[margin=3cm]{geometry}
+
+\usepackage{multirow}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+}
+
+\usepackage{longtable}
+
+\usepackage[numbers]{natbib}
+\defcitealias{Cormen}{Cormen}
+\defcitealias{Goodrich}{Goodrich}
+
+\usepackage[usenames, dvipsnames]{xcolor}
+
+\usepackage{forest}
+
+\usepackage{listings}
+\lstdefinestyle{pseudo}
+{
+    keywordstyle = [1]{\normalfont\bfseries},
+    keywordstyle = [2]{\normalfont\it},
+    keywordstyle = [3]{\normalfont},
+    morekeywords = [1]{repeat, for, to, return, if},
+    morekeywords = [2]{A, B, N, M, output, accum, count, prev, i, j, k, d, start, end},
+    morekeywords = [3]{let},
+    morecomment = [l][\color{BrickRed}\it]{//}
+}
+
+\title{Solutions for Data Structures and Algorithms Spring 2023 — Problem Sets}
+\author{By Dmitriy Okoneshnikov, B22-DSAI-04}
+
+\begin{document}
+
+\maketitle
+
+\section*{Week 8. Problem set}
+
+\begin{enumerate}
+    \item Insert the following keys into an initially empty red-black tree [\citetalias{Cormen}, Chapter 13]:
+
+    \[20, 13, 10, 7, 9, 1\]
+
+    Show the state of the tree after each insertion (your answer must contain 6 trees).
+
+    \textbf{Answer.}
+
+    \begin{enumerate}
+        \item After inserting $20$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [20, color={black}
+            [NIL, color={black}]
+            [NIL, color={black}]
+        ]
+        \end{forest}
+        
+        \item After inserting $13$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [20, color={black}
+            [13, color={red}
+                [NIL, color={black}]
+                [NIL, color={black}]
+            ]
+            [NIL, color={black}]
+        ]
+        \end{forest}
+        
+        \item After inserting $10$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13, color={black}
+            [10, color={red}
+                [NIL, color={black}]
+                [NIL, color={black}]
+            ]
+            [20, color={red}
+                [NIL, color={black}]
+                [NIL, color={black}]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $7$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13, color={black}
+            [10, color={black}
+                [7, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+                [NIL, color={black}]
+            ]
+            [20, color={black}
+                [NIL, color={black}]
+                [NIL, color={black}]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $9$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13, color={black}
+            [9, color={black}
+                [7, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+                [10, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+            ]
+            [20, color={black}
+                [NIL, color={black}]
+                [NIL, color={black}]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $1$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [9, color={black}
+            [7, color={black}
+                [1, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+                [NIL, color={black}]
+            ]
+            [13, color={black}
+                [10, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+                [20, color={red}
+                    [NIL, color={black}]
+                    [NIL, color={black}]
+                ]
+            ]
+        ]
+        \end{forest}
+    \end{enumerate}
+    
+    \item Insert the following keys into an initially empty AVL tree [\citetalias{Goodrich}, Section 11.3]:
+
+    \[20, 13, 10, 7, 9, 1\]
+
+    Show the state of the tree after each insertion (your answer must contain 6 trees).
+
+    \textbf{Answer.}
+
+    \begin{enumerate}
+        \item After inserting $20$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [20
+            [NIL]
+            [NIL]
+        ]
+        \end{forest}
+        
+        \item After inserting $13$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [20
+            [13
+                [NIL]
+                [NIL]
+            ]
+            [NIL]
+        ]
+        \end{forest}
+        
+        \item After inserting $10$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13
+            [10
+                [NIL]
+                [NIL]
+            ]
+            [20
+                [NIL]
+                [NIL]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $7$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13
+            [10
+                [7
+                    [NIL]
+                    [NIL]
+                ]
+                [NIL]
+            ]
+            [20
+                [NIL]
+                [NIL]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $9$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [13
+            [9
+                [7
+                    [NIL]
+                    [NIL]
+                ]
+                [10
+                    [NIL]
+                    [NIL]
+                ]
+            ]
+            [20
+                [NIL]
+                [NIL]
+            ]
+        ]
+        \end{forest}
+        
+        \item After inserting $1$:
+
+        \begin{forest}
+        for tree = {circle, draw}
+        [9
+            [7
+                [1
+                    [NIL]
+                    [NIL]
+                ]
+                [NIL]
+            ]
+            [13
+                [10
+                   [NIL]
+                   [NIL]
+                ]
+                [20
+                   [NIL]
+                   [NIL]
+                ]
+            ]
+        ]
+        \end{forest}
+    \end{enumerate}
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen}
+  T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein.
+  \textit{Introduction to Algorithms, Fourth Edition.}
+  The MIT Press
+  2022.
+\bibitem{Goodrich}
+  M. T. Goodrich, R. Tamassia, and M. H. Goldwasser.
+  \textit{Data Structures and Algorithms in Java.}
+  WILEY
+  2014.
+\end{thebibliography}
+
+\end{document}
