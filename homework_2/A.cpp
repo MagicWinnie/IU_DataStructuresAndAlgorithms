@@ -94,6 +94,7 @@ namespace MergeSort
 
 // Task 2.1.5
 // Red-Black tree
+// Implemented by using Cormen, Chapter 13
 namespace RBTree
 {
     enum Color
