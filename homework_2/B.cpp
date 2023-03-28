@@ -98,15 +98,15 @@ int main(void)
     for (size_t i = 0; i < n; i++)
         Y[i] = abs(2.0 * double(X[i]) / m - 1.0);
 
-    // The code was sent to CodeForces using bucket sort (199384647) and using quick sort (199384572).
-    // The bucket sort has maximal execution time of 7128 ms and the quick sort -- 3166 ms.
+    // The code was sent to CodeForces using bucket sort (199493845) and using quick sort (199493905).
+    // The bucket sort has maximal execution time of 6848 ms and the quick sort -- 2932 ms.
     // It is obvious that quick sort is indeed quick and ran twice as fast.
     if (USE_BUCKETSORT)
         sorting::bucketSort(Y);
     else
         sorting::quickSort(Y);
 
-    size_t j = n / 2;
+    size_t j = (n - 1) / 2;
     double value = Y[j];
     for (size_t i = 0; i < n; i++)
         if (abs(abs(2.0 * double(X[i]) / m - 1.0) - value) < EPS)
