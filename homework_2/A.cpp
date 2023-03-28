@@ -434,21 +434,12 @@ namespace RBTree
         // Worst-time complexity O(log(n))
         Node<T> *predecessor(T data)
         {
-            bool existed = false;
             Node<T> *x = find(data);
-
             if (x == nullptr)
-            {
-                insert(data);
-                x = find(data);
-            }
-            else
-                existed = true;
+                return nullptr;
             if (x->left != NIL)
             {
                 Node<T> *tmp = maximum(x->left);
-                if (!existed)
-                    erase(data);
                 return tmp;
             }
             Node<T> *y = x->parent;
@@ -457,27 +448,17 @@ namespace RBTree
                 x = y;
                 y = y->parent;
             }
-            if (!existed)
-                erase(data);
             return y;
         }
         // Worst-time complexity O(log(n))
         Node<T> *successor(T data)
         {
-            bool existed = false;
             Node<T> *x = find(data);
             if (x == nullptr)
-            {
-                insert(data);
-                x = find(data);
-            }
-            else
-                existed = true;
+                return nullptr;
             if (x->right != NIL)
             {
                 Node<T> *tmp = minimum(x->right);
-                if (!existed)
-                    erase(data);
                 return tmp;
             }
             Node<T> *y = x->parent;
@@ -486,8 +467,6 @@ namespace RBTree
                 x = y;
                 y = y->parent;
             }
-            if (!existed)
-                erase(data);
             return y;
         }
         // Worst-time complexity O(n)
@@ -675,11 +654,7 @@ namespace Geometry
 
 using namespace std;
 
-// Task 2.1.6
-// Solves the problem using Sweep Line algorithm
-// Returns the ids of leftmost intersecting line segments in vec
-// The solution is inspired by https://cp-algorithms.com/geometry/intersecting_segments.html
-pair<size_t, size_t> solve(vector<Point::LineSegment<int>> &lineSegments)
+vector<Point::Event<int>> generateEvents(vector<Point::LineSegment<int>> &lineSegments)
 {
     vector<Point::Event<int>> events(2 * lineSegments.size());
     for (size_t i = 0; i < lineSegments.size(); i++)
@@ -687,6 +662,16 @@ pair<size_t, size_t> solve(vector<Point::LineSegment<int>> &lineSegments)
         events[i] = Point::Event<int>(lineSegments[i].getLeft(), i + 1, true);
         events[lineSegments.size() + i] = Point::Event<int>(lineSegments[i].getRight(), i + 1, false);
     }
+    return events;
+}
+
+// Task 2.1.6
+// Solves the problem using Sweep Line algorithm
+// Returns the ids of leftmost intersecting line segments in vec
+// The solution is inspired by https://cp-algorithms.com/geometry/intersecting_segments.html
+pair<size_t, size_t> solve(vector<Point::LineSegment<int>> &lineSegments)
+{
+    vector<Point::Event<int>> events = generateEvents(lineSegments);
     MergeSort::sort(events);
 
     RBTree::RBTree<Point::LineSegment<int>> tree;
@@ -698,9 +683,9 @@ pair<size_t, size_t> solve(vector<Point::LineSegment<int>> &lineSegments)
         {
             tree.insert(currSegment);
             suc = tree.successor(currSegment);
-            pre = tree.predecessor(currSegment);
             if (suc != nullptr and Geometry::doIntersect(currSegment, suc->data))
                 return make_pair(event.getID(), suc->data.getID());
+            pre = tree.predecessor(currSegment);
             if (pre != nullptr and Geometry::doIntersect(currSegment, pre->data))
                 return make_pair(event.getID(), pre->data.getID());
         }
