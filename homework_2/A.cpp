@@ -432,6 +432,7 @@ namespace RBTree
         // Worst-time complexity O(log(n))
         void erase(T data) { root = eraseWorker(root, data); }
         // Worst-time complexity O(log(n))
+        // Inspired by https://stackoverflow.com/questions/3381867/iterating-over-a-map/3382702#3382702
         Node<T> *predecessor(T data)
         {
             Node<T> *x = find(data);
@@ -451,6 +452,7 @@ namespace RBTree
             return y;
         }
         // Worst-time complexity O(log(n))
+        // Inspired by https://stackoverflow.com/questions/3381867/iterating-over-a-map/3382702#3382702
         Node<T> *successor(T data)
         {
             Node<T> *x = find(data);
