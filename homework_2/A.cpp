@@ -629,18 +629,28 @@ namespace Geometry
         return std::max(left1, left2) <= std::min(right1, right2) + EPS;
     }
 
+    // Returns if two line segments intersect
+    // Inspired by https://e-maxx.ru/algo/segments_intersection_checking
     template <typename T>
     bool doIntersect(Point::LineSegment<T> a, Point::LineSegment<T> b)
     {
-        return intersect1d(a.getLeft().getX(), a.getRight().getX(), b.getLeft().getX(), b.getRight().getX()) and
-               intersect1d(a.getLeft().getY(), a.getRight().getY(), b.getLeft().getY(), b.getRight().getY()) and
-               orientation(a.getLeft(), a.getRight(), b.getLeft()) * orientation(a.getLeft(), a.getRight(), b.getRight()) < EPS and
-               orientation(b.getLeft(), b.getRight(), a.getLeft()) * orientation(b.getLeft(), b.getRight(), a.getRight()) < EPS;
+        // check x axis
+        if (!intersect1d(a.getLeft().getX(), a.getRight().getX(), b.getLeft().getX(), b.getRight().getX()))
+            return false;
+        // check y axis
+        if (!intersect1d(a.getLeft().getY(), a.getRight().getY(), b.getLeft().getY(), b.getRight().getY()))
+            return false;
+        // check if C and D are on different sides of AB
+        if (orientation(a.getLeft(), a.getRight(), b.getLeft()) * orientation(a.getLeft(), a.getRight(), b.getRight()) >= EPS)
+            return false;
+        // check if A and B are on different sides of CD
+        if (orientation(b.getLeft(), b.getRight(), a.getLeft()) * orientation(b.getLeft(), b.getRight(), a.getRight()) >= EPS)
+            return false;
+        return true;
     }
 
     // Task 2.1.1
-    // Returns true if two line segments intersect
-    // Inspired by https://e-maxx.ru/algo/segments_intersection_checking
+    // Returns the point of intersection of two line segments
     template <typename T>
     Point::Point<double> getIntersection(Point::LineSegment<T> a, Point::LineSegment<T> b)
     {
