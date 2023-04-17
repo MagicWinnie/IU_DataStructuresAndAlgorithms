@@ -35,7 +35,7 @@ namespace Graph
         }
     };
     template <typename V, typename W>
-    class DiGraph
+    class Graph
     {
     private:
         int size = 0;
@@ -46,7 +46,7 @@ namespace Graph
         unordered_map<int, vector<Edge<int, W>>> adjList;
 
     public:
-        DiGraph() {}
+        Graph() {}
         void insertVertex(V vertex)
         {
             vertex2id[vertex] = size;
@@ -98,7 +98,7 @@ namespace Graph
 
             return true;
         }
-        friend ostream &operator<<(ostream &out, const DiGraph<V, W> &g)
+        friend ostream &operator<<(ostream &out, const Graph<V, W> &g)
         {
             for (auto const &p : g.adjList)
             {
@@ -111,10 +111,10 @@ namespace Graph
         }
     };
     template <typename V, typename W>
-    class BiGraph : public DiGraph<V, W>
+    class BiGraph : public Graph<V, W>
     {
     public:
-        BiGraph() : DiGraph<V, W>() {}
+        BiGraph() : Graph<V, W>() {}
         void insertEdge(V start, V end, W val) override
         {
             this->adjList[this->vertex2id[start]].push_back(Edge<int, W>(this->vertex2id[start], this->vertex2id[end], val));
@@ -125,7 +125,7 @@ namespace Graph
 
 int main(void)
 {
-    Graph::DiGraph<int, int> graph;
+    Graph::Graph<int, int> graph;
 
     int n;
     cin >> n;
